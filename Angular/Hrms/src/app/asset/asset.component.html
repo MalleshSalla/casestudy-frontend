@@ -1,0 +1,260 @@
+
+
+
+
+<div class="container-fluid">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Human Resource Management System</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addAsset" type="submit" (click)="clearAssetData('addAssetForm')"  *ngIf="showAdminBoard">Add Asset</button>
+          </div>
+        </div>
+    </nav>
+
+
+
+    <table class="table table-hover" id="assetListTable">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Asset Name</th>
+            <th scope="col">Asset ModelNo</th>
+            <th scope="col">Asset Type</th>
+            <th scope="col">Employee Id</th>
+            <th scope="col">Employee Name</th>
+
+            <th scope="col"  *ngIf="showAdminBoard">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let asset of assList">
+            <td>{{asset.id}}</td>
+            <td>{{asset.assetName}}</td>
+            <td>{{asset.assetModelNo}}</td>
+            <td>{{asset.assetType}}</td>
+            <td>{{asset.employeeId}}</td>
+            <td>{{asset.employeeName}}</td>
+            <td >
+                <button type="button" class="btn btn-outline-primary me-2" data-bs-toggle="modal" (click)="getAssetById(asset)" data-bs-target="#editAsset">Edit</button>
+                <button type="button" class="btn btn-outline-danger"  *ngIf="showAdminBoard"  (click)="deleteAsset(asset)">Delete</button>
+            </td>
+
+          </tr>
+          
+        </tbody>
+      </table>
+
+  
+ <!--Add Asset modal--> 
+  <div class="modal fade" id="addAsset" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add new Asset</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+            <form  name="form" #f="ngForm" id="addAssetForm">
+              <div  class="form-group">
+                <div class="mb-3">
+                  <input
+                    type="hidden"
+                    class="form-control"
+                    name="id"
+                    [(ngModel)]="form.id"
+                    #name="ngModel"
+                    
+                  />
+                    <label for="exampleInputEmail1" class="form-label">Asset Name </label>
+                    <!--<input type="text" formControlName="name" class="form-control"  id="name" aria-describedby="emailHelp" > -->
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="assetname"
+                      id="addname"
+                      [(ngModel)]="form.assetname"
+                      #name="ngModel"
+                      (change)="onKeypressEvent($event)"
+                    (keypress)="onKeypressEvent($event)"
+                    />
+                    <span
+                    class="invalidname validationClass" style="display: none;color:red;"         
+                  > 
+                    Please Provide Asset Name
+                  </span>
+                  </div>
+                <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">Asset ModelNo </label>
+                  <input
+                      type="text"
+                      class="form-control"
+                      name="modelNo"
+                      id="addmodel"
+                      [(ngModel)]="form.modelNo"
+                      #name="ngModel"
+                      (change)="onKeypressEvent($event)"
+                    (keypress)="onKeypressEvent($event)"
+                    />
+                    <span
+                    class="invalidmodel validationClass" style="display: none;color:red;"         
+                  > 
+                    Please Provide Asset Model No.
+                  </span>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Asset Type</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="assettype"
+                      id="addassettype"
+                      [(ngModel)]="form.assettype"
+                      #name="ngModel"
+                      (change)="onKeypressEvent($event)"
+                    (keypress)="onKeypressEvent($event)"
+                    />
+                    <span
+                    class="invalidtype validationClass" style="display: none;color:red;"         
+                  > 
+                    Please Provide Asset Type
+                  </span>
+                  </div>
+                  <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Employee Id</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="employeeid"
+                      id="addemployeeid"
+                      [(ngModel)]="form.employeeid"
+                      #name="ngModel"
+                      (change)="onKeypressEvent($event)"
+                    (keypress)="onKeypressEvent($event)"
+                    />
+                    <span
+                    class="invalidemployeeid validationClass" style="display: none;color:red;"         
+                  > 
+                    Please Provide Employee Id
+                  </span>
+                  </div>
+                  
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="static" (click)="addAsset($event)">Add Asset</button>
+                  </div>
+                </div>
+              </form>
+
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- Edit Asset modal -->
+  <div class="modal fade" id="editAsset" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Edit asset details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+            <form name="editForm" #f="ngForm">
+                <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">AssetName </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="editassetname"
+                      name="assetname"
+                      [(ngModel)]="form.assetname"
+                      #name="ngModel"
+                      (change)="onKeypressEvent($event)"
+                      (keypress)="onKeypressEvent($event)"
+                    />
+                    <span
+                    class="editname validationClass" style="display: none;color:red;"         
+                  > 
+                    Please Provide Asset Name
+                  </span>
+                  </div>
+                <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">AssetModelNo </label>
+                  <input
+                      type="text"
+                      class="form-control"
+                      name="modelNo"
+                      id="editmodelno"
+                      [(ngModel)]="form.modelNo"
+                      #name="ngModel"
+                      (change)="onKeypressEvent($event)"
+                    (keypress)="onKeypressEvent($event)"
+                    />
+                    <span
+                    class="editmodel validationClass" style="display: none;color:red;"         
+                  > 
+                    Please Provide Asset Model No.
+                  </span>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">AssetType </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="assettype"
+                      id="editassettype"
+                      [(ngModel)]="form.assettype"
+                      #name="ngModel"
+                      (change)="onKeypressEvent($event)"
+                    (keypress)="onKeypressEvent($event)"
+                    />
+                    <span
+                    class="edittype validationClass" style="display: none;color:red;"         
+                  > 
+                    Please Provide Asset Type
+                  </span>
+                  </div>
+                  <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">employeeId </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="employeeid"
+                      id="editemployeeid"
+                      [(ngModel)]="form.employeeid"
+                      #name="ngModel"
+                      (change)="onKeypressEvent($event)"
+                    (keypress)="onKeypressEvent($event)"
+                    />
+                    <span
+                    class="editemployee validationClass" style="display: none;color:red;"         
+                  > 
+                    Please Provide Employee ID
+                  </span>
+                  </div>
+                  
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-success" (click)="updateAsset($event)">Update </button>
+                  </div>
+              </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div> 
+
+
+

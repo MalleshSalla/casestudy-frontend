@@ -1,0 +1,257 @@
+<div class="container-fluid">
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Human Resource Management System</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addEmployee" type="submit" (click)="clearEmployeeData('addEmployeeForm')"  *ngIf="showAdminBoard">Add Employee</button>
+        </div>
+      </div>
+  </nav>
+
+
+
+  <table class="table table-hover" id="employeeListTable">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Employee Name</th>
+          <th scope="col">Employee Department </th>
+          <th scope="col">Employee Designation</th>
+          <th scope="col">Employee Salary</th>
+          <th scope="col"  *ngIf="showAdminBoard">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let employee of empList">
+          <td>{{employee.id}}</td>
+          <td>{{employee.employeeName}}</td>
+          <td>{{employee.employeeDepartment}}</td>
+          <td>{{employee.employeeDesignation}}</td>
+          <td>{{employee.employeeSalary}}</td>
+          <td >
+              <button type="button" class="btn btn-outline-primary me-2" data-bs-toggle="modal" (click)="getEmployeeById(employee)" data-bs-target="#editEmployee">Edit</button>
+              <button type="button" class="btn btn-outline-danger"*ngIf="showAdminBoard"  (click)="deleteEmployee(employee)">Delete</button>
+          </td>
+
+        </tr>
+        
+      </tbody>
+    </table>
+
+
+<!--Add employee modal--> 
+<div class="modal fade" id="addEmployee" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add new Employee</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        
+          <form  name="form" #f="ngForm" id="addEmployeeForm" >
+            <div  class="form-group">
+              <div class="mb-3">
+                <input
+                  type="hidden"
+                  class="form-control"
+                  name="id"
+                  [(ngModel)]="form.id"
+                  #name="ngModel"
+                  />
+                </div>
+                <div class="mb-3">
+                  
+                  <label for="exampleInputEmail1" class="form-label">EmployeeName </label>
+                  <!--<input type="text" formControlName="name" class="form-control"  id="name" aria-describedby="emailHelp" > -->
+                  <input
+                  required
+                    type="text"
+                    class="form-control"
+                    name="name"
+                    id="name"
+                    [(ngModel)]="form.name"
+                    #name="ngModel"
+                    (keypress)="onKeypressEvent($event)"
+                    (change)="onKeypressEvent($event)"
+                  />
+                  <span
+                  class="invalid-feedback validationClass" style="display: none;color:red;"         
+                > 
+                  Please Fill Name Field
+              </span>
+                  
+
+                  
+                </div>
+              <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">EmployeeDepartment </label>
+                <input
+                    type="text"
+                    class="form-control"
+                    name="department"
+                    id="department"
+                    [(ngModel)]="form.department"
+                    #name="ngModel"
+                    (change)="onKeypressEvent($event)"
+                    (keypress)="onKeypressEvent($event)"
+                  />
+                  <span
+                    class="invalidDepartment validationClass" style="display: none;color:red;"         
+                    > 
+                    Please Fill Department Field
+                  </span>
+              </div>
+              <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">EmployeeDesignation </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="designation"
+                    id = "designation"
+                    [(ngModel)]="form.designation"
+                    #name="ngModel"
+                    (keypress)="onKeypressEvent($event)"
+                    (change)="onKeypressEvent($event)"
+                  />
+                  <span
+                    class="invalidDesignation validationClass" style="display: none;color:red;"         
+                  > 
+                     Please Fill Designation Field
+                </span>
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">EmployeeSalary </label>
+                  <input
+                  type="text"
+                  class="form-control"
+                  name="salary"
+                  id ="salary"
+                  [(ngModel)]="form.salary"
+                  #name="ngModel"
+                  (keypress)="onKeypressEvent($event)"
+                  (change)="onKeypressEvent($event)"
+                />
+                <span
+                    class="invalidSalary validationClass" style="display: none;color:red;"         
+                  > 
+                  Please Fill Salary Field
+                </span>
+                </div>
+              <div class="modal-footer">
+                  <button #closeModal type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" data-bs-dismiss="static" (click)="addEmployee($event)">Add employee</button>
+                </div>
+              </div>
+            </form>
+
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<!-- Edit employee modal -->
+<div class="modal fade" id="editEmployee" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit employee details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+          <form name="editForm" #f="ngForm">
+              <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">EmployeeName </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="name"
+                    id="editname"
+                    [(ngModel)]="form.name"
+                    #name="ngModel"
+                    (change)="onKeypressEvent($event)"
+                    (keypress)="onKeypressEvent($event)"
+                  />
+                  <span
+                    class="invalid validationClass" style="display: none;color:red;"         
+                  > 
+                    Please Fill Name Field
+                  </span>
+                </div>
+              <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">EmployeeDepartment </label>
+                <input
+                    type="text"
+                    class="form-control"
+                    name="department"
+                    id="editdepartment"
+                    [(ngModel)]="form.department"
+                    #name="ngModel"
+                    (change)="onKeypressEvent($event)"
+                    (keypress)="onKeypressEvent($event)"
+                  />
+                  <span
+                    class="Depart validationClass" style="display: none;color:red;"         
+                  > 
+                    Please Fill Department Field
+                  </span>
+              </div>
+              <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">EmployeeDesignation </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="designation"
+                    id="editdesignation"
+                    [(ngModel)]="form.designation"
+                    #name="ngModel"
+                    (change)="onKeypressEvent($event)"
+                    (keypress)="onKeypressEvent($event)"
+                  />
+                  <span
+                    class="invalidDesign validationClass" style="display: none;color:red;"         
+                  > 
+                  Please Fill Designation Field
+                </span>
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">EmployeeSalary </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="salary"
+                    id="editsalary"
+                    [(ngModel)]="form.salary"
+                    #name="ngModel"
+                    (change)="onKeypressEvent($event)"
+                    (keypress)="onKeypressEvent($event)"
+                  />
+                  <span
+                    class="invalidSal validationClass" style="display: none;color:red;"         
+                  > 
+                  Please Fill Salary Field
+                </span>
+                  
+                </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-outline-success" (click)="updateEmployee($event)">Update </button>
+                </div>
+            </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div> 
+
+
